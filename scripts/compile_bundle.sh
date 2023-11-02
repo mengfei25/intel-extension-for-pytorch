@@ -9,7 +9,7 @@ VER_LLVM="llvmorg-13.0.0"
 VER_PYTORCH="v2.0.1"
 VER_TORCHVISION="v0.15.2"
 VER_TORCHAUDIO="v2.0.2"
-VER_IPEX="xpu-master"
+VER_IPEX="xpu-main"
 VER_GCC=11
 
 if [[ $# -lt 2 ]]; then
