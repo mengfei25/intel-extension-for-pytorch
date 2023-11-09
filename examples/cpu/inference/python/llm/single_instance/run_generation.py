@@ -136,51 +136,19 @@ if args.benchmark:
     if args.token_latency:
         if not hasattr(model.config, "token_latency"):
             model.config.token_latency = True
-    # input prompt
-    current_path = pathlib.Path(__file__).parent.resolve()
-    with open(str(current_path) + "/prompt.json") as f:
-        prompt_pool = json.load(f)
-    if args.prompt is not None:
-        prompt = args.prompt
-    elif model_type == "auto":
-        raise SystemExit(
-            "[ERROR] model prompt is not supported, please use --prompt for this model: "
-            + args.model_id
-        )
-    elif int(args.input_tokens) > 8192:
-        prompt = prompt_pool[model_type]["8192"] * int(int(args.input_tokens) / 8192)
-    elif args.input_tokens in prompt_pool[model_type]:
-        prompt = prompt_pool[model_type][args.input_tokens]
-    else:
-        raise SystemExit("[ERROR] Plese use --prompt if want to use custom input.")
-
-    input_size = tokenizer(prompt, return_tensors="pt").input_ids.size(dim=1)
-    print("---- Prompt size:", input_size)
 
     # start
     total_time = 0.0
     num_iter = args.num_iter
     num_warmup = args.num_warmup
-    prompt = [prompt] * args.batch_size
     total_list = []
     with torch.inference_mode(), torch.no_grad(), torch.cpu.amp.autocast(
         enabled=amp_enabled
     ):
-        if args.profile:
-            with torch.profiler.profile(
-                activities=[torch.profiler.ProfilerActivity.CPU],
-                schedule=torch.profiler.schedule(wait=1, warmup=3, active=1),
-                on_trace_ready=trace_handler,
-            ) as prof:
-                for i in range(5):
-                    input_ids = tokenizer(prompt, return_tensors="pt").input_ids
-                    output = model.generate(
-                        input_ids, max_new_tokens=args.max_new_tokens, **generate_kwargs
-                    )
-                    prof.step()
         for i in range(num_iter):
             tic = time.time()
-            input_ids = tokenizer(prompt, return_tensors="pt").input_ids
+            # input_ids = tokenizer(prompt, return_tensors="pt").input_ids
+            input_ids = torch.randint(1, tokenizer.vocab_size, size = (args.batch_size, int(args.input_tokens)))
             output = model.generate(
                 input_ids, max_new_tokens=args.max_new_tokens, **generate_kwargs
             )
