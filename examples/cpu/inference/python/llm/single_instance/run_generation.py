@@ -155,13 +155,6 @@ if args.benchmark:
             gen_ids = output[0] if args.token_latency else output
             gen_text = tokenizer.batch_decode(gen_ids, skip_special_tokens=True)
             toc = time.time()
-            input_tokens_lengths = [x.shape[0] for x in input_ids]
-            output_tokens_lengths = [x.shape[0] for x in gen_ids]
-            total_new_tokens = [
-                o - i if model.config.model_type != "t5" else o
-                for i, o in zip(input_tokens_lengths, output_tokens_lengths)
-            ]
-            print(gen_text, total_new_tokens, flush=True)
             print("Iteration: %d, Time: %.6f sec" % (i, toc - tic), flush=True)
             if i >= num_warmup:
                 total_time += toc - tic
