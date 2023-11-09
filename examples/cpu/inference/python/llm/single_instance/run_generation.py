@@ -111,11 +111,11 @@ model = model.to(memory_format=torch.channels_last)
 
 # to ipex
 if args.ipex:
-    model = ipex.optimize(
+    model = ipex.optimize_transformers(
         model.eval(),
         dtype=amp_dtype,
         inplace=True,
-        # deployment_mode=args.deployment_mode,
+        deployment_mode=args.deployment_mode,
     )
 
 if args.torch_compile:
