@@ -9,6 +9,7 @@ from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
     LlamaTokenizer,
+    T5ForConditionalGeneration,
 )
 
 
@@ -19,6 +20,7 @@ MODEL_CLASSES = {
     "llama": (AutoModelForCausalLM, LlamaTokenizer),
     "opt": (AutoModelForCausalLM, AutoTokenizer),
     "falcon": (AutoModelForCausalLM, AutoTokenizer),
+    "t5": (T5ForConditionalGeneration, AutoTokenizer),
     "auto": (AutoModelForCausalLM, AutoTokenizer),
 }
 
